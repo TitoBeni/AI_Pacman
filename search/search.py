@@ -107,7 +107,7 @@ def depthFirstSearch(problem):
             visited.append(node)  # Put to the visited list the actual node
             successors = problem.getSuccessors(node)
 
-            for next_node, action, _ in successors:  # Look for each successor of the actual node
+            for next_node, action, cost in successors:  # Look for each successor of the actual node
                 if next_node not in visited:
                     stack.push((next_node, actions + [action]))  # Push the next node and the updated action list onto the stack
 
