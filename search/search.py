@@ -95,7 +95,7 @@ def depthFirstSearch(problem):
     if problem.isGoalState(node):
         return
     
-    stack.push(node)
+    stack.push((node, []))
 
     while not stack.isEmpty():
         node, actions = stack.pop()
