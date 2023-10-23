@@ -268,7 +268,7 @@ def euclideanHeuristic(position, problem, info={}):
 
 class CornersProblem(search.SearchProblem):
     """
-    This search problem finds paths through all four corners of a layout.
+    This search sproblem finds paths through all four corners of a layout.
 
     You must select a suitable state space and successor function
     """
@@ -295,6 +295,8 @@ class CornersProblem(search.SearchProblem):
         space)
         """
         "*** YOUR CODE HERE ***"
+        start_state = (self.startingPosition, (False, False, False, False))
+        return start_state
         util.raiseNotDefined()
 
     def isGoalState(self, state):
@@ -302,6 +304,8 @@ class CornersProblem(search.SearchProblem):
         Returns whether this search state is a goal state of the problem.
         """
         "*** YOUR CODE HERE ***"
+        pacman_position, corners = state
+        return all(corners) # will return us True if al the corners have been visited, else it will return False
         util.raiseNotDefined()
 
     def getSuccessors(self, state):
@@ -316,6 +320,8 @@ class CornersProblem(search.SearchProblem):
         """
 
         successors = []
+        current_position, corners = state
+
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
             # Add a successor state to the successor list if the action is legal
             # Here's a code snippet for figuring out whether a new position hits a wall:
@@ -325,6 +331,31 @@ class CornersProblem(search.SearchProblem):
             #   hitsWall = self.walls[nextx][nexty]
 
             "*** YOUR CODE HERE ***"
+
+            x,y = current_position
+            dx, dy = Actions.directionToVector(action)
+            nextx, nexty = int(x + dx), int(y + dy)
+            hitsWall = self.walls[nextx][nexty]
+
+            # Check if Pac-Man's current position is a corner
+            if (nextx, nexty) in self.corners:
+                # Update the corners component to mark the visited corner
+                new_corners = tuple(nextx == corner_x and nexty == corner_y or corner_visited for (corner_x, corner_y), corner_visited in zip(self.corners, corners))
+            else:
+                new_corners = corners
+
+            if not hitsWall:
+                # Calculate the new position after taking the action
+                new_position = (nextx, nexty)
+
+                # Construct the new state with updated position
+                new_state = (new_position, new_corners)
+
+                # Calculate the action and cost
+                action_taken = action
+                step_cost = 1
+
+                successors.append((new_state, action_taken, step_cost))
 
         self._expanded += 1 # DO NOT CHANGE
         return successors
@@ -341,7 +372,6 @@ class CornersProblem(search.SearchProblem):
             x, y = int(x + dx), int(y + dy)
             if self.walls[x][y]: return 999999
         return len(actions)
-
 
 def cornersHeuristic(state, problem):
     """
