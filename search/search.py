@@ -17,6 +17,9 @@ In search.py, you will implement generic search algorithms which are called by
 Pacman agents (in searchAgents.py).
 """
 
+from multiprocessing import current_process
+import queue
+from select import select
 import util
 
 class SearchProblem:
@@ -149,6 +152,42 @@ def breadthFirstSearch(problem):
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
+    startState =problem.getStartState()
+
+    queue_frontier = util.PriorityQueue()
+    
+    queue_frontier.push((startState,0), 0)
+
+    cost_so_far = {startState:0}
+    came_from = {}
+
+    while not queue_frontier.isEmpty():
+        
+        current_node, current_cost = queue_frontier.pop()
+
+        if problem.isGoalState(current_node):
+            break
+        
+        for neighbor, action, weight in problem.getSuccessors(current_node):
+            
+            new_cost = cost_so_far[current_node] + weight
+
+            if neighbor not in cost_so_far or new_cost < cost_so_far[neighbor]:
+                cost_so_far[neighbor] = new_cost
+                queue_frontier.push((neighbor, new_cost),new_cost)
+                came_from[neighbor] = (current_node, action)
+    
+    path = []
+    while current_node != startState:
+        current_node_tuple = came_from[current_node]
+        current_node = current_node_tuple[0]
+        current_action = current_node_tuple[1]
+        path.append(current_action)
+    # path.append(startState)
+    path.reverse()
+    # print(path)
+    return path
+
     util.raiseNotDefined()
 
 def nullHeuristic(state, problem=None):
