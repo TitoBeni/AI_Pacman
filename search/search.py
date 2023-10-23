@@ -159,48 +159,24 @@ def nullHeuristic(state, problem=None):
     return 0
 
 def aStarSearch(problem, heuristic=nullHeuristic):
-    """Search the node that has the lowest combined cost and heuristic first."""
-    "*** YOUR CODE HERE ***"
-    
-    open_list = []
-    closed_list = []
-
-    start_node = problem.getStartState()
-    g_start = 0  # Cost to reach the starting node from itself
-    h_start = heuristic(start_node, problem)  # Heuristic cost from the start to the goal
-    f_start = g_start + h_start  # Estimated total cost
-
-    open_list.append((start_node, g_start, h_start, []))  # Add an empty path for the start node
+    open_list = [(problem.getStartState(), [], 0, 0)]  # State, path, g, f
+    closed_list = set()
 
     while open_list:
-        # Find the node in open_list with the lowest f value
-        current_node, g_current, _, path = min(open_list, key=lambda x: x[1] + x[2])
+        current_state, actions, g, f = min(open_list, key=lambda x: x[3])
+        open_list.remove((current_state, actions, g, f))
 
-        if problem.isGoalState(current_node):
-            # If we've reached the goal, return the path
-            return path
+        if problem.isGoalState(current_state):
+            return actions
 
-        open_list.remove((current_node, g_current, _, path))
-        closed_list.append((current_node, g_current))
+        closed_list.add(current_state)
 
-        # Expand the current node
-        for successor, action, step_cost in problem.getSuccessors(current_node):
-            g_successor = g_current + step_cost
-            h_successor = heuristic(successor, problem)
-            f_successor = g_successor + h_successor
-
-            in_open_set = any(successor == node for node, _, _, _ in open_list)
-            in_closed_set = any(successor == node for node, _ in closed_list)
-
-            if not in_open_set and not in_closed_set:
-                new_path = path + [action]
-                open_list.append((successor, g_successor, h_successor, new_path))
-            elif in_open_set and g_successor < g_current:
-                # Update the node's information in the open_list
-                existing_entry = next(entry for entry in open_list if entry[0] == successor)
-                open_list.remove(existing_entry)
-                new_path = path + [action]
-                open_list.append((successor, g_successor, h_successor, new_path))
+        for next_state, action, cost in problem.getSuccessors(current_state):
+            if next_state not in closed_list:
+                new_path = actions + [action]
+                new_g = g + cost
+                new_f = new_g + heuristic(next_state, problem)
+                open_list.append((next_state, new_path, new_g, new_f))
 
     return []  # No path found
     util.raiseNotDefined()
