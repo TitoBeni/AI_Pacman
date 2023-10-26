@@ -96,7 +96,7 @@ def depthFirstSearch(problem):
     visited = []
 
     if problem.isGoalState(node):
-        return
+        return []
     
     stack.push((node, []))
 
@@ -109,11 +109,9 @@ def depthFirstSearch(problem):
         if node not in visited:
             visited.append(node)  # Put to the visited list the actual node
             successors = problem.getSuccessors(node)
-
             for next_node, action, cost in successors:  # Look for each successor of the actual node
                 if next_node not in visited:
                     stack.push((next_node, actions + [action]))  # Push the next node and the updated action list onto the stack
-
     return actions
 
     util.raiseNotDefined()
