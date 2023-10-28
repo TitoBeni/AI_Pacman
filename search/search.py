@@ -159,27 +159,26 @@ def nullHeuristic(state, problem=None):
     return 0
 
 def aStarSearch(problem, heuristic=nullHeuristic):
-    open_list = [(problem.getStartState(), [], 0, 0)]  # State, path, g, f
-    closed_list = set()
+    queue = util.PriorityQueue()
+    visited_nodes = set()
 
-    while open_list:
-        current_state, actions, g, f = min(open_list, key=lambda x: x[3])
-        open_list.remove((current_state, actions, g, f))
+    start_node = problem.getStartState()
+    queue.push((start_node, [], 0), heuristic(start_node, problem))
 
-        if problem.isGoalState(current_state):
+    while not queue.isEmpty():
+        position, actions, get_cost = queue.pop()
+
+        if problem.isGoalState(position):
             return actions
 
-        closed_list.add(current_state)
+        if position not in visited_nodes:
+            visited_nodes.add(position)
 
-        for next_state, action, cost in problem.getSuccessors(current_state):
-            if next_state not in closed_list:
-                new_path = actions + [action]
-                new_g = g + cost
-                new_f = new_g + heuristic(next_state, problem)
-                open_list.append((next_state, new_path, new_g, new_f))
+            for coordinates, direction, successor_cost in problem.getSuccessors(position):
+                if coordinates not in visited_nodes:
+                    queue.push((coordinates, actions + [direction], 0), get_cost + successor_cost + heuristic(coordinates, problem))
 
-    return []  # No path found
-    util.raiseNotDefined()
+    return []
 
 
 # Abbreviations

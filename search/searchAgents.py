@@ -386,6 +386,7 @@ def cornersHeuristic(state, problem):
     shortest path from the state to a goal of the problem; i.e. it should be
     admissible (as well as consistent).
     """
+<<<<<<< Updated upstream
     corners = problem.corners  # These are the corner coordinates
     walls = problem.walls  # These are the walls of the maze, as a Grid (game.py)
 
@@ -399,6 +400,74 @@ def cornersHeuristic(state, problem):
         nearest_corner_distance = min(manhattanHeuristic(current_position, problem, {"goal": unvisited_corners[0]}))
         return nearest_corner_distance
 
+=======
+
+    """corners = problem.corners
+    walls = problem.walls
+
+    current_position, visited_corners = state
+
+    # We store the coordinates of the unvisited corners
+    
+    unvisited_corners = []
+    for i in range(len(visited_corners)):
+        if not visited_corners:
+            unvisited_corners.append = corners[i]
+    
+    if len(visited_corners) > 0:
+        for i in unvisited_corners:
+            min(manhattanHeuristic(current_position, problem.i, info={}))
+
+    current_sum = 0    
+    while unvisited_corners != []:
+        
+        dists_temp = []
+    
+        for corner in unvisited_corners:
+        
+            d = util.manhattanDistance(current_position, corner)
+            dists_temp.append(d)
+        
+        min_dist = min(dists_temp)
+        current_sum = current_sum + min_dist
+        position = unvisited_corners.pop(dists_temp.index(min_dist))
+
+    return current_sum"""
+
+    """pos, visited_corners = state
+    corners = problem.corners
+    x1, y1 = pos
+    distances = []
+    for corner in corners:
+        x2, y2 = corner
+        distance = abs(x1 - x2) + abs(y1 - y2)
+        distances.append(distance)
+    heuristic = max(distances)
+    if problem.isGoalState(state):
+        return 0
+    return heuristic"""
+
+    corners = problem.corners
+    walls = problem.walls
+    
+    node = state[0]
+    visited_corners = state[1]
+    cornersToVisit = []
+    for corner in corners:
+        if corner not in visited_corners:
+            cornersToVisit.append(corner)
+            
+    if len(cornersToVisit) == 0:
+        return 0
+    
+    manhatten = []
+    for i in cornersToVisit:
+        manhatten.append(util.manhattanDistance(i, node))
+        cornersToVisit.remove(i)
+    return min(manhatten)
+
+    
+>>>>>>> Stashed changes
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
