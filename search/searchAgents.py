@@ -34,6 +34,8 @@ description for details.
 Good luck and happy searching!
 """
 
+from multiprocessing.sharedctypes import Value
+from operator import index
 from game import Directions
 from game import Agent
 from game import Actions
@@ -340,7 +342,12 @@ class CornersProblem(search.SearchProblem):
             # Check if Pac-Man's current position is a corner
             if (nextx, nexty) in self.corners:
                 # Update the corners component to mark the visited corner
-                new_corners = tuple(nextx == corner_x and nexty == corner_y or corner_visited for (corner_x, corner_y), corner_visited in zip(self.corners, corners))
+                # self.corners describe the problems's corners 
+                # corners
+    
+                new_corners = tuple(
+                        nextx == corner_x and nexty == corner_y or corner_visited for (corner_x, corner_y), corner_visited in zip(self.corners, corners)
+                    )
             else:
                 new_corners = corners
 
@@ -387,69 +394,32 @@ def cornersHeuristic(state, problem):
     admissible (as well as consistent).
     """
 
-    """corners = problem.corners
+    corners = problem.corners
     walls = problem.walls
-
-    current_position, visited_corners = state
-
-    # We store the coordinates of the unvisited corners
     
     unvisited_corners = []
-    for i in range(len(visited_corners)):
-        if not visited_corners:
-            unvisited_corners.append = corners[i]
-    
-    if len(visited_corners) > 0:
-        for i in unvisited_corners:
-            min(manhattanHeuristic(current_position, problem.i, info={}))
 
-    current_sum = 0    
-    while unvisited_corners != []:
+    for indx, value in enumerate(state[1]):
+        if not value:
+            unvisited_corners.append(corners[indx])
+
+    heuristic = 0
+    if unvisited_corners:
+        manhatten = {}
+        for value in unvisited_corners:
+            manhatten[value] = util.manhattanDistance(state[0],value)
         
-        dists_temp = []
-    
-        for corner in unvisited_corners:
+        while manhatten:
+            min_key_heuristic = min(manhatten, key=manhatten.get)
+            heuristic += manhatten[min_key_heuristic]
+            del manhatten[min_key_heuristic]
+            unvisited_corners = [tupla for tupla in unvisited_corners if tupla != min_key_heuristic]
+
+            manhatten = {}
+            for value in unvisited_corners:
+                manhatten[value] = util.manhattanDistance(state[0],value)
         
-            d = util.manhattanDistance(current_position, corner)
-            dists_temp.append(d)
-        
-        min_dist = min(dists_temp)
-        current_sum = current_sum + min_dist
-        position = unvisited_corners.pop(dists_temp.index(min_dist))
-
-    return current_sum"""
-
-    """pos, visited_corners = state
-    corners = problem.corners
-    x1, y1 = pos
-    distances = []
-    for corner in corners:
-        x2, y2 = corner
-        distance = abs(x1 - x2) + abs(y1 - y2)
-        distances.append(distance)
-    heuristic = max(distances)
-    if problem.isGoalState(state):
-        return 0
-    return heuristic"""
-
-    corners = problem.corners
-    walls = problem.walls
-    
-    node = state[0]
-    visited_corners = state[1]
-    cornersToVisit = []
-    for corner in corners:
-        if corner not in visited_corners:
-            cornersToVisit.append(corner)
-            
-    if len(cornersToVisit) == 0:
-        return 0
-    
-    manhatten = []
-    for i in cornersToVisit:
-        manhatten.append(util.manhattanDistance(i, node))
-        cornersToVisit.remove(i)
-    return min(manhatten)
+    return heuristic
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
@@ -543,6 +513,14 @@ def foodHeuristic(state, problem):
     """
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
+    # foodGrid.asList() lista de donde estan la comida
+
+    distance = []
+    distance_food = []
+
+    for food in foodGrid.asList():
+        pass        
+
     return 0
 
 class ClosestDotSearchAgent(SearchAgent):
