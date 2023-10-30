@@ -196,7 +196,7 @@ def nullHeuristic(state, problem=None):
     return 0
 
 def aStarSearch(problem, heuristic=nullHeuristic):
-    queue = util.PriorityQueue()
+    """queue = util.PriorityQueue()
     visited_nodes = set()
 
     start_node = problem.getStartState()
@@ -215,7 +215,34 @@ def aStarSearch(problem, heuristic=nullHeuristic):
                 if coordinates not in visited_nodes:
                     queue.push((coordinates, actions + [direction], 0), get_cost + successor_cost + heuristic(coordinates, problem))
 
-    return []
+    return []"""
+    
+    open_list = util.PriorityQueue()
+    visited_list = []
+    path = []
+    start = problem.getStartState()
+    open_list.push((start, path), 0)
+
+    while not open_list.isEmpty():
+        node, path = open_list.pop()
+
+        if problem.isGoalState(node):
+            return path
+
+        if node not in visited_list:
+            visited_list.append(node)
+            successors = problem.getSuccessors(node)
+            for successor in successors:
+                next_node = successor[0]
+                action = successor[1]
+                if next_node not in visited_list:
+                    new_path = path + [action]
+                    g = problem.getCostOfActions(new_path)
+                    h = heuristic(next_node, problem)
+                    f = g + h
+                    open_list.push((next_node, new_path), f)
+
+    util.raiseNotDefined()
 
 
 # Abbreviations
