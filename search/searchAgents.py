@@ -431,25 +431,30 @@ def cornersHeuristic(state, problem):
     if problem.isGoalState(state):
         return 0
     return heuristic"""
-
+    
     corners = problem.corners
     walls = problem.walls
     
-    node = state[0]
-    visited_corners = state[1]
-    cornersToVisit = []
-    for corner in corners:
-        if corner not in visited_corners:
-            cornersToVisit.append(corner)
-            
-    if len(cornersToVisit) == 0:
-        return 0
-    
-    manhatten = []
-    for i in cornersToVisit:
-        manhatten.append(util.manhattanDistance(i, node))
-        cornersToVisit.remove(i)
-    return min(manhatten)
+    unvisited_corners = []
+
+    for indx, value in enumerate(state[1]):
+        if not value:
+            unvisited_corners.append(corners[indx])
+
+    heuristic = 0
+    current_state = state[0]
+
+    while unvisited_corners:
+        manhatten = {}
+        for value in unvisited_corners:
+            manhatten[value] = util.manhattanDistance(current_state,value)
+        min_key_heuristic = min(manhatten, key=manhatten.get)
+        
+        heuristic += util.manhattanDistance(current_state, min_key_heuristic)
+        current_state = min_key_heuristic
+        unvisited_corners.remove(min_key_heuristic)
+    return heuristic
+        
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
