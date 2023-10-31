@@ -578,6 +578,8 @@ class ClosestDotSearchAgent(SearchAgent):
                 if action not in legal:
                     t = (str(action), str(currentState))
                     raise Exception('findPathToClosestDot returned an illegal move: %s!\n%s' % t)
+                print(currentState)
+                # Give back the result of make action in the previuos state
                 currentState = currentState.generateSuccessor(0, action)
         self.actionIndex = 0
         print('Path found with cost %d.' % len(self.actions))
@@ -592,8 +594,8 @@ class ClosestDotSearchAgent(SearchAgent):
         food = gameState.getFood()
         walls = gameState.getWalls()
         problem = AnyFoodSearchProblem(gameState)
-
-        "*** YOUR CODE HERE ***"
+        # We create a problem with the game state and return the shortest path to the first dot that we find
+        return search.aStarSearch(problem)
         util.raiseNotDefined()
 
 class AnyFoodSearchProblem(PositionSearchProblem):
@@ -628,8 +630,8 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         complete the problem definition.
         """
         x,y = state
-
-        "*** YOUR CODE HERE ***"
+        # return a path if in food [x][y] exists a dot to eat
+        return self.food[x][y]
         util.raiseNotDefined()
 
 def mazeDistance(point1, point2, gameState):
